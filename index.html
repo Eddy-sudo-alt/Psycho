@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Therapie-Satire – Prototyp</title>
+<style>
+  :root{
+    --ink:#222; --paper:#fff8ea; --accent:#d33; --muted:#7a6f5a;
+    --btn:#222; --btnText:#fff; --btnHover:#444;
+  }
+  html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#111;}
+  .game {
+    min-height:100dvh; display:grid; place-items:center; padding:16px;
+    background:#111 url('img/waiting_room.png') center/cover no-repeat fixed;
+  }
+  .card {
+    width:min(720px, 95vw); background:var(--paper);
+    color:var(--ink); border:3px solid #000; border-radius:14px;
+    box-shadow:0 12px 40px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .hero {
+    position:relative; aspect-ratio:16/9; background:#e9dfc8 center/cover no-repeat;
+    border-bottom:3px solid #000;
+  }
+  .hero::after{
+    content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(255,248,234,.8), rgba(255,248,234,.1) 60%, transparent);
+    pointer-events:none;
+  }
+  .inner{padding:16px 16px 20px;}
+  .title{font-weight:800; font-size:1.35rem; margin:0 0 8px;}
+  .text{margin:0 0 12px; color:#3a342d; line-height:1.35;}
+  .answers{display:grid; gap:10px; margin-top:10px;}
+  button.answer{
+    border:3px solid #000; background:var(--btn); color:var(--btnText);
+    padding:12px 14px; border-radius:10px; text-align:left; font-weight:700; cursor:pointer;
+  }
+  button.answer:hover{ background:var(--btnHover); }
+  .bar {height:10px; background:#00000010; border:2px solid #000; border-radius:8px; overflow:hidden; margin:8px 0 0;}
+  .bar>i{display:block; height:100%; width:0%; background:linear-gradient(90deg,#f7c52b,#ef6b2d);}
+
+  .row{display:flex; gap:10px; justify-content:space-between; align-items:center;}
+  .pill{font:700 .8rem/1 monospace; background:#000; color:#fff; padding:6px 10px; border-radius:999px; border:2px solid #000;}
+  .small{font-size:.85rem; color:var(--muted)}
+
+  .footer {
+    display:flex; gap:8px; justify-content:flex-end; margin-top:12px;
+  }
+  .btn {
+    border:3px solid #000; border-radius:10px; padding:10px 14px; font-weight:800;
+    background:#fff; cursor:pointer;
+  }
+  .btn.primary{ background:var(--accent); color:#fff; }
+  .btn:hover{ filter:brightness(.95); }
+
+  /* Mobile tweaks */
+  @media (max-width:420px){
+    .title{font-size:1.15rem}
+    button.answer{font-size:.95rem}
+  }
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="card">
+    <div id="scene" class="hero"></div>
+    <div class="inner">
+      <div class="row">
+        <h1 class="title" id="title">Wartezimmer</h1>
+        <span class="pill" id="step">0/0</span>
+      </div>
+      <p class="text" id="text">Sie betreten das Wartezimmer. Eine Uhr tickt. Jemand ruft: „Der/Die Nächste, bitte!“</p>
+      <div class="answers" id="answers"></div>
+      <div class="footer" id="footer"></div>
+      <div class="bar"><i id="progress"></i></div>
+      <p class="small" id="hint">Hinweis: Satire-Spiel. Jede Sitzung endet mit einer Diagnose, egal wie „gesund“ die Antworten klingen.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== Bildquellen – hier ggf. Pfade anpassen ====== */
+const IMAGES = {
+  waiting: 'img/waiting_room.png',
+  therapist: 'img/therapist.png',
+  office: 'img/office_bg.png',
+  paper: 'img/diagnosis_paper.png',
+  door: 'img/next_patient.png'
+};
+
+/* ====== Fragensatz (klein, aber abwechslungsreich) ======
+   Jede Antwort hat optional „w“ (weight): -1=leichter, 0=neutral, +1=schwerer.
+   Das ist keine echte Psychologie; es treibt nur die Satire-Spiel-Logik. */
+const QUESTIONS = [
+  {
+    scene: 'therapist',
+    q: 'Wie geht es Ihnen heute?',
+    a: [
+      {t:'Echt gut, danke.', w:0},
+      {t:'Müde, aber funktional.', w:0},
+      {t:'Es kommt in Wellen…', w:1},
+      {t:'Ich vertraue nur Tassen mit Henkel nach Osten.', w:1}
+    ]
+  },
+  {
+    scene: 'office',
+    q: 'Schlaf?',
+    a: [
+      {t:'7–8 Stunden, meistens durchgehend.', w:-1},
+      {t:'Entweder 3 oder 13 Stunden, je nach Mondphase.', w:1},
+      {t:'Unregelmäßig, aber ok.', w:0}
+    ]
+  },
+  {
+    scene: 'therapist',
+    q: 'Wie reagieren Sie auf Stress?',
+    a: [
+      {t:'Sport / frische Luft.', w:-1},
+      {t:'Listen, dann Taten.', w:0},
+      {t:'Ich falte Alufolie zu Schutzamulet­ten.', w:1}
+    ]
+  },
+  {
+    scene: 'office',
+    q: 'Soziale Kontakte?',
+    a: [
+      {t:'Regelmäßig, ein kleiner Kreis.', w:0},
+      {t:'Nur mit meinem Kaktus „Herr Stachel“.', w:1},
+      {t:'Mal viel, mal gar nicht.', w:1}
+    ]
+  },
+  {
+    scene: 'therapist',
+    q: 'Ernährung & Energie?',
+    a: [
+      {t:'Relativ ausgewogen.', w:-1},
+      {t:'Kaffee ist mein Blut.', w:1},
+      {t:'Wechselt – passt schon.', w:0}
+    ]
+  },
+  {
+    scene: 'office',
+    q: 'Glauben Sie, dass dieses Spiel Sie fair bewerten wird?',
+    a: [
+      {t:'Absolut. Was soll schon schiefgehen?', w:0},
+      {t:'Nein. Es diagnostiziert sowieso alles.', w:0},
+      {t:'Nur wenn die Uhr im Wartezimmer mit mir spricht.', w:1}
+    ]
+  }
+];
+
+/* ====== Satirische „echt klingende“ Diagnosen ====== */
+const DIAGNOSES = {
+  light: [
+    'Adaptive Alltags-Schwankung (Version 1.1)',
+    'Introvertiv-affektive Phase – Frühstadium',
+    'Situationsbedingte Montagsmüdigkeit (chronisch leicht)'
+  ],
+  medium: [
+    'Bipolare Episode 3. Grades (handelsüblich)',
+    'Zweifache Borderline-Tendenz (Trial-Version)',
+    'Dysthymie mit Kaffeesucht-Komorbidität'
+  ],
+  heavy: [
+    'Bipolare Episode 10. Grades (mit Konfetti)',
+    'Mega-Paranoid (Limited Collector’s Cut)',
+    'Giga-Schizophrenie – Deluxe Bundle'
+  ],
+  work_off: [
+    'Systemübergreifende Funktionsunfähigkeit – Amtlich gestempelt',
+    'Ultra-Borderline Pro Max (mit Pausentaste)',
+    'Hyper-Cyclothymie 9000 (Arbeitsfreistellung empfohlen)'
+  ]
+};
+
+/* ====== State ====== */
+let step = 0;
+let score = 0; // Summe der w; bestimmt nur Tendenz
+const total = QUESTIONS.length;
+
+const $scene = document.getElementById('scene');
+const $title = document.getElementById('title');
+const $text  = document.getElementById('text');
+const $answers = document.getElementById('answers');
+const $footer = document.getElementById('footer');
+const $prog = document.getElementById('progress');
+const $step = document.getElementById('step');
+
+/* ====== Utils ====== */
+function setScene(key){
+  const url = IMAGES[key] || IMAGES.office;
+  $scene.style.backgroundImage = `url('${url}')`;
+}
+function setProgress(){
+  const pct = Math.round((step/total)*100);
+  $prog.style.width = pct + '%';
+  $step.textContent = `${Math.min(step,total)}/${total}`;
+}
+function clearUI(){ $answers.innerHTML=''; $footer.innerHTML=''; }
+
+/* ====== Flow ====== */
+function showIntro(){
+  setScene('waiting');
+  $title.textContent = 'Wartezimmer';
+  $text.textContent = 'Sie sitzen. Die Uhr tickt. Eine Stimme: „Der/Die Nächste bitte…“';
+  clearUI();
+  const go = document.createElement('button');
+  go.className = 'btn primary'; go.textContent = 'Therapie beginnen';
+  go.onclick = nextQuestion;
+  $footer.append(go);
+  step = 0; score = 0; setProgress();
+}
+function nextQuestion(){
+  if(step >= total) return finish();
+  const item = QUESTIONS[step];
+  setScene(item.scene);
+  $title.textContent = 'Sitzung';
+  $text.textContent = item.q;
+  clearUI();
+  item.a.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'answer';
+    b.textContent = opt.t;
+    b.onclick = ()=> {
+      score += (opt.w??0);
+      step++;
+      setProgress();
+      // Mini-Pause für „Therapeut notiert…“
+      $text.textContent = '…der Therapeut nickt und notiert unleserliche Kürzel.';
+      setTimeout(()=> step<total ? nextQuestion() : finish(), 380);
+    };
+    $answers.append(b);
+  });
+}
+function finish(){
+  // Leichte Zufälligkeit, aber Score beeinflusst Richtung
+  // (Score <= -1 -> eher leicht; 0–1 -> mittel; >=2 -> schwer)
+  setScene('paper');
+  clearUI();
+  let bucket = 'medium';
+  if(score <= -1) bucket = Math.random()<.75 ? 'light':'medium';
+  else if(score >= 2) bucket = Math.random()<.75 ? 'heavy':'medium';
+
+  // 20% Chance auf „Arbeitsunfähigkeit“, +10% wenn wirklich hoch
+  const workChance = (bucket==='heavy'? .30 : .20);
+  const work = Math.random() < workChance;
+  const list = work ? DIAGNOSES.work_off
+                    : DIAGNOSES[bucket];
+  const dx = list[Math.floor(Math.random()*list.length)];
+
+  $title.textContent = 'Diagnose';
+  $text.innerHTML = `<strong style="font-size:1.25rem">DIAGNOSE:</strong><br>${dx}`;
+  const again = document.createElement('button');
+  again.className='btn primary'; again.textContent='Neue Sitzung';
+  again.onclick = ()=>{
+    setScene('door');
+    $title.textContent='NEXT PATIENT';
+    $text.textContent='Die Tür fällt zu. Tief durchatmen…';
+    clearUI();
+    const b = document.createElement('button');
+    b.className='btn'; b.textContent='Zurück ins Wartezimmer';
+    b.onclick = showIntro;
+    $footer.append(b);
+    step = total; setProgress();
+  };
+
+  const share = document.createElement('button');
+  share.className='btn'; share.textContent='Zitat kopieren';
+  share.onclick = ()=>{
+    const clip = `Therapie-Satire: ${dx} (Score ${score}, ${new Date().toLocaleDateString()})`;
+    navigator.clipboard?.writeText(clip);
+    share.textContent='Kopiert ✅';
+  };
+
+  $footer.append(share, again);
+  step = total; setProgress();
+}
+
+/* ====== Start ====== */
+showIntro();
+</script>
+</body>
+</html>
