@@ -83,63 +83,425 @@
 /* ====== Fragensatz (klein, aber abwechslungsreich) ======
    Jede Antwort hat optional „w“ (weight): -1=leichter, 0=neutral, +1=schwerer.
    Das ist keine echte Psychologie; es treibt nur die Satire-Spiel-Logik. */
-const QUESTIONS = [
-  {
-    scene: 'therapist',
-    q: 'Wie geht es Ihnen heute?',
-    a: [
-      {t:'Echt gut, danke.', w:0},
-      {t:'Müde, aber funktional.', w:0},
-      {t:'Es kommt in Wellen…', w:1},
-      {t:'Ich vertraue nur Tassen mit Henkel nach Osten.', w:1}
-    ]
-  },
-  {
-    scene: 'office',
-    q: 'Schlaf?',
-    a: [
-      {t:'7–8 Stunden, meistens durchgehend.', w:-1},
-      {t:'Entweder 3 oder 13 Stunden, je nach Mondphase.', w:1},
-      {t:'Unregelmäßig, aber ok.', w:0}
-    ]
-  },
-  {
-    scene: 'therapist',
-    q: 'Wie reagieren Sie auf Stress?',
-    a: [
-      {t:'Sport / frische Luft.', w:-1},
-      {t:'Listen, dann Taten.', w:0},
-      {t:'Ich falte Alufolie zu Schutzamulet­ten.', w:1}
-    ]
-  },
-  {
-    scene: 'office',
-    q: 'Soziale Kontakte?',
-    a: [
-      {t:'Regelmäßig, ein kleiner Kreis.', w:0},
-      {t:'Nur mit meinem Kaktus „Herr Stachel“.', w:1},
-      {t:'Mal viel, mal gar nicht.', w:1}
-    ]
-  },
-  {
-    scene: 'therapist',
-    q: 'Ernährung & Energie?',
-    a: [
-      {t:'Relativ ausgewogen.', w:-1},
-      {t:'Kaffee ist mein Blut.', w:1},
-      {t:'Wechselt – passt schon.', w:0}
-    ]
-  },
-  {
-    scene: 'office',
-    q: 'Glauben Sie, dass dieses Spiel Sie fair bewerten wird?',
-    a: [
-      {t:'Absolut. Was soll schon schiefgehen?', w:0},
-      {t:'Nein. Es diagnostiziert sowieso alles.', w:0},
-      {t:'Nur wenn die Uhr im Wartezimmer mit mir spricht.', w:1}
-    ]
-  }
+/* ========= PART 1 (Q1–Q40) ========= */
+const QUESTIONS_PART1 = [
+  {scene:'therapist', q:'Wie fühlen Sie sich heute?', a:[
+    {t:'Stabil.', w:-1},{t:'Wechselhaft.', w:1},{t:'Neutral.', w:0}
+  ]},
+  {scene:'office', q:'Schlafqualität?', a:[
+    {t:'Gut.', w:-1},{t:'Unruhig.', w:0},{t:'Quasi nicht.', w:1}
+  ]},
+  {scene:'therapist', q:'Appetit?', a:[
+    {t:'Normal.', w:-1},{t:'Wechselnd.', w:0},{t:'Nur Snacks.', w:1}
+  ]},
+  {scene:'office', q:'Energie morgens?', a:[
+    {t:'Fit.', w:-1},{t:'Geht so.', w:0},{t:'Zombie.', w:1}
+  ]},
+  {scene:'therapist', q:'Konzentration?', a:[
+    {t:'Fokussiert.', w:-1},{t:'Schwankend.', w:0},{t:'Kaum möglich.', w:1}
+  ]},
+  {scene:'office', q:'Stimmung über Woche?', a:[
+    {t:'Konstant.', w:-1},{t:'Leichte Wellen.', w:0},{t:'Achterbahn.', w:1}
+  ]},
+  {scene:'therapist', q:'Sozial aktiv?', a:[
+    {t:'Regelmäßig.', w:-1},{t:'Selten.', w:0},{t:'Nur online.', w:1}
+  ]},
+  {scene:'office', q:'Reizbarkeit?', a:[
+    {t:'Selten.', w:-1},{t:'Manchmal.', w:0},{t:'Permanent.', w:1}
+  ]},
+  {scene:'therapist', q:'Kritikfähigkeit?', a:[
+    {t:'Lernchance.', w:-1},{t:'Kommt drauf an.', w:0},{t:'Komplott!', w:1}
+  ]},
+  {scene:'office', q:'Pünktlichkeit?', a:[
+    {t:'Pünktlich.', w:-1},{t:'Knapp.', w:0},{t:'Zu spät ist Standard.', w:1}
+  ]},
+  {scene:'therapist', q:'Ordnung zuhause?', a:[
+    {t:'Aufgeräumt.', w:-1},{t:'Stapelweise.', w:0},{t:'Archäologie nötig.', w:1}
+  ]},
+  {scene:'office', q:'Finanzen im Blick?', a:[
+    {t:'Budgetiert.', w:-1},{t:'Überrascht mich oft.', w:0},{t:'Chaos.', w:1}
+  ]},
+  {scene:'therapist', q:'Bewegung?', a:[
+    {t:'Regelmäßig.', w:-1},{t:'Selten.', w:0},{t:'Nur vom Bett zum Kühlschrank.', w:1}
+  ]},
+  {scene:'office', q:'Genussmittel?', a:[
+    {t:'Wenig.', w:-1},{t:'Gelegentlich.', w:0},{t:'Dauerhaft.', w:1}
+  ]},
+  {scene:'therapist', q:'Gedankenkreisen?', a:[
+    {t:'Selten.', w:-1},{t:'Manchmal.', w:0},{t:'Nonstop.', w:1}
+  ]},
+  {scene:'office', q:'Impulskontrolle?', a:[
+    {t:'Gut.', w:-1},{t:'Durchwachsen.', w:0},{t:'Was ist das?', w:1}
+  ]},
+  {scene:'therapist', q:'Selbstbild?', a:[
+    {t:'Realistisch.', w:-1},{t:'Schwankend.', w:0},{t:'Auserwählt.', w:1}
+  ]},
+  {scene:'office', q:'Zukunftsplanung?', a:[
+    {t:'Klar.', w:-1},{t:'Skizzenhaft.', w:0},{t:'Nur Heute.', w:1}
+  ]},
+  {scene:'therapist', q:'Motivation?', a:[
+    {t:'Stabil.', w:-1},{t:'Tagesform.', w:0},{t:'Null.', w:1}
+  ]},
+  {scene:'office', q:'Entscheidungen?', a:[
+    {t:'Zügig.', w:-1},{t:'Mit Hilfe.', w:0},{t:'Paralyse.', w:1}
+  ]},
+  {scene:'therapist', q:'Prokrastination?', a:[
+    {t:'Kaum.', w:-1},{t:'Manchmal.', w:0},{t:'Kernkompetenz.', w:1}
+  ]},
+  {scene:'office', q:'Reizüberflutung?', a:[
+    {t:'Selten.', w:-1},{t:'Ab und zu.', w:0},{t:'Schon im Supermarkt.', w:1}
+  ]},
+  {scene:'therapist', q:'Vertrauen?', a:[
+    {t:'Leicht.', w:-1},{t:'Selektiv.', w:0},{t:'Nur der Zimmerpflanze.', w:1}
+  ]},
+  {scene:'office', q:'Humor?', a:[
+    {t:'Täglich.', w:-1},{t:'Wenn’s passt.', w:0},{t:'Selbst auf Beerdigungen unpassend.', w:1}
+  ]},
+  {scene:'therapist', q:'Selbstfürsorge?', a:[
+    {t:'Routinen.', w:-1},{t:'Unregelmäßig.', w:0},{t:'Ignoriere ich.', w:1}
+  ]},
+  {scene:'office', q:'Grenzen setzen?', a:[
+    {t:'Klar.', w:-1},{t:'Schwierig.', w:0},{t:'Nie.', w:1}
+  ]},
+  {scene:'therapist', q:'Perfektionismus?', a:[
+    {t:'Gesund dosiert.', w:-1},{t:'Phasenweise.', w:0},{t:'Lähmend.', w:1}
+  ]},
+  {scene:'office', q:'Vergesslichkeit?', a:[
+    {t:'Selten.', w:-1},{t:'Manchmal.', w:0},{t:'Wie hieß ich nochmal?', w:1}
+  ]},
+  {scene:'therapist', q:'Risiko-Verhalten?', a:[
+    {t:'Bedacht.', w:-1},{t:'Gelegentlich spontan.', w:0},{t:'YOLO.', w:1}
+  ]},
+  {scene:'office', q:'Selbstkritik?', a:[
+    {t:'Konstruktiv.', w:-1},{t:'Launisch.', w:0},{t:'Zerfleischend.', w:1}
+  ]},
+  {scene:'therapist', q:'Hoffnung?', a:[
+    {t:'Vorhanden.', w:-1},{t:'Wechselnd.', w:0},{t:'Ausverkauft.', w:1}
+  ]},
+  {scene:'office', q:'Sinn im Alltag?', a:[
+    {t:'Ja.', w:-1},{t:'Suche ihn.', w:0},{t:'Sinnkrise 24/7.', w:1}
+  ]},
+  {scene:'therapist', q:'Selbstwirksamkeit?', a:[
+    {t:'Hoch.', w:-1},{t:'Mittel.', w:0},{t:'Niedrig.', w:1}
+  ]},
+  {scene:'office', q:'Belohnungen?', a:[
+    {t:'Gezielt.', w:-1},{t:'Spontan.', w:0},{t:'Exzessiv.', w:1}
+  ]},
+  {scene:'therapist', q:'Konfliktstil?', a:[
+    {t:'Sachlich.', w:-1},{t:'Vermeidend.', w:0},{t:'Explosiv.', w:1}
+  ]},
+  {scene:'office', q:'Verantwortung übernehmen?', a:[
+    {t:'Ja.', w:-1},{t:'Manchmal.', w:0},{t:'Schiebe ab.', w:1}
+  ]},
+  {scene:'therapist', q:'Selbstmitgefühl?', a:[
+    {t:'Übe ich.', w:-1},{t:'Selten.', w:0},{t:'Nie.', w:1}
+  ]},
+  {scene:'office', q:'Prioritäten?', a:[
+    {t:'Klar geordnet.', w:-1},{t:'Wechselnd.', w:0},{t:'Alles brennt.', w:1}
+  ]},
+  {scene:'therapist', q:'Fokus auf Positives?', a:[
+    {t:'Aktiv.', w:-1},{t:'Gelegentlich.', w:0},{t:'Nur Probleme.', w:1}
+  ]},
+  {scene:'office', q:'Tagesstruktur?', a:[
+    {t:'Fixe Routine.', w:-1},{t:'Grundgerüst.', w:0},{t:'Kein Plan.', w:1}
+  ]}
 ];
+/* ====== FRAGENPOOL BLOCK 2 ====== */
+QUESTIONS.push(
+  /* Emotionen & Selbstbild */
+  { scene:'therapist', q:'Wie oft fühlen Sie sich glücklich?', a:[
+    {t:'Sehr oft, fast täglich.', w:-1},
+    {t:'Ab und zu.', w:0},
+    {t:'Glück? Nie gehört.', w:1}
+  ]},
+  { scene:'office', q:'Wie beschreiben Sie Ihr Selbstbewusstsein?', a:[
+    {t:'Gesund und stabil.', w:-1},
+    {t:'Schwankt je nach Tag.', w:0},
+    {t:'Ich bin der Auserwählte… oder wertlos.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie häufig zweifeln Sie an sich selbst?', a:[
+    {t:'Kaum.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Permanent – mein zweiter Vorname ist Zweifel.', w:1}
+  ]},
+  { scene:'office', q:'Wie gehen Sie mit Lob um?', a:[
+    {t:'Freue mich ehrlich.', w:-1},
+    {t:'Tue so, aber glaube es nicht.', w:0},
+    {t:'Vermute Manipulation dahinter.', w:1}
+  ]},
+  { scene:'therapist', q:'Fühlen Sie sich oft schuldig?', a:[
+    {t:'Nein.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Für alles, sogar schlechtes Wetter.', w:1}
+  ]},
+
+  /* Körper & Gesundheit */
+  { scene:'office', q:'Wie achten Sie auf Ihre Gesundheit?', a:[
+    {t:'Sehr stark.', w:-1},
+    {t:'Gelegentlich.', w:0},
+    {t:'Gar nicht.', w:1}
+  ]},
+  { scene:'therapist', q:'Sport treiben Sie…?', a:[
+    {t:'Regelmäßig.', w:-1},
+    {t:'Selten.', w:0},
+    {t:'Nur beim Zappen mit der Fernbedienung.', w:1}
+  ]},
+  { scene:'office', q:'Wie ernähren Sie sich?', a:[
+    {t:'Ausgewogen.', w:-1},
+    {t:'Unterschiedlich.', w:0},
+    {t:'Fastfood ist mein Grundnahrungsmittel.', w:1}
+  ]},
+  { scene:'therapist', q:'Haben Sie oft körperliche Beschwerden?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Ab und zu.', w:0},
+    {t:'Dauernd, mein Körper ist ein Jammerkonzert.', w:1}
+  ]},
+  { scene:'office', q:'Wie oft gehen Sie zum Arzt?', a:[
+    {t:'Regelmäßig, wenn nötig.', w:-1},
+    {t:'Kaum.', w:0},
+    {t:'Nie, Ärzte sind Teil des Systems!', w:1}
+  ]},
+
+  /* Arbeit & Leistung */
+  { scene:'therapist', q:'Wie ist Ihre Arbeitseinstellung?', a:[
+    {t:'Motiviert und zuverlässig.', w:-1},
+    {t:'Mal engagiert, mal nicht.', w:0},
+    {t:'Ich boykottiere Arbeit innerlich.', w:1}
+  ]},
+  { scene:'office', q:'Wie oft sind Sie gestresst bei der Arbeit?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Regelmäßig.', w:0},
+    {t:'Immer – mein Job ist ein Horrorfilm.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie gehen Sie mit Verantwortung um?', a:[
+    {t:'Trage sie gerne.', w:-1},
+    {t:'Mal so, mal so.', w:0},
+    {t:'Ich laufe weg.', w:1}
+  ]},
+  { scene:'office', q:'Wie stehen Sie zu Regeln?', a:[
+    {t:'Wichtig und sinnvoll.', w:-1},
+    {t:'Kommt drauf an.', w:0},
+    {t:'Nur da, um gebrochen zu werden.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie reagieren Sie auf Deadlines?', a:[
+    {t:'Erledige Aufgaben vorher.', w:-1},
+    {t:'Knapp rechtzeitig.', w:0},
+    {t:'Erst in der letzten Minute – oder nie.', w:1}
+  ]},
+
+  /* Soziales Verhalten */
+  { scene:'office', q:'Wie oft streiten Sie sich?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Ab und zu.', w:0},
+    {t:'Dauernd, sogar mit Automaten.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie reagieren Sie in Konflikten?', a:[
+    {t:'Suche Lösungen.', w:-1},
+    {t:'Ignoriere sie manchmal.', w:0},
+    {t:'Explosion pur.', w:1}
+  ]},
+  { scene:'office', q:'Wie ist Ihr Verhältnis zu Familie?', a:[
+    {t:'Gut.', w:-1},
+    {t:'Durchwachsen.', w:0},
+    {t:'Katastrophal.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie verhalten Sie sich in Gruppen?', a:[
+    {t:'Aktiv und integriert.', w:-1},
+    {t:'Still, beobachtend.', w:0},
+    {t:'Isoliere mich komplett.', w:1}
+  ]},
+  { scene:'office', q:'Wie fühlen Sie sich in großen Menschenmengen?', a:[
+    {t:'Wohl.', w:-1},
+    {t:'Neutral.', w:0},
+    {t:'Panisch oder verfolgt.', w:1}
+  ]},
+
+  /* Denken & Wahrnehmung */
+  { scene:'therapist', q:'Fühlen Sie sich oft beobachtet?', a:[
+    {t:'Nein.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Immer – von Aliens.', w:1}
+  ]},
+  { scene:'office', q:'Wie nehmen Sie die Welt wahr?', a:[
+    {t:'Realistisch.', w:-1},
+    {t:'Etwas verzerrt.', w:0},
+    {t:'Alles ist eine Simulation.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie oft vergessen Sie Dinge?', a:[
+    {t:'Kaum.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Ständig, sogar meinen Namen.', w:1}
+  ]},
+  { scene:'office', q:'Wie stark beeinflusst Sie Stress?', a:[
+    {t:'Wenig.', w:-1},
+    {t:'Etwas.', w:0},
+    {t:'Total – ich zerbreche.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie stark beeinflussen Sie Gefühle?', a:[
+    {t:'Gut regulierbar.', w:-1},
+    {t:'Manchmal schwierig.', w:0},
+    {t:'Ich bin ein Vulkan.', w:1}
+  ]}
+);
+/* ====== FRAGENPOOL BLOCK 3 ====== */
+QUESTIONS.push(
+  /* Emotion & Stimmung */
+  { scene:'therapist', q:'Wie oft fühlen Sie sich nervös?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Gelegentlich.', w:0},
+    {t:'Ständig – selbst beim Zähneputzen.', w:1}
+  ]},
+  { scene:'office', q:'Wie erleben Sie Freude?', a:[
+    {t:'Leicht und oft.', w:-1},
+    {t:'Ab und zu.', w:0},
+    {t:'Gar nicht – Freude ist mir fremd.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie schnell wechseln Ihre Gefühle?', a:[
+    {t:'Langsam, nachvollziehbar.', w:-1},
+    {t:'Mal schnell, mal langsam.', w:0},
+    {t:'Sekündlich – wie eine Wetter-App.', w:1}
+  ]},
+  { scene:'office', q:'Fühlen Sie sich oft leer?', a:[
+    {t:'Nein.', w:-1},
+    {t:'Ab und zu.', w:0},
+    {t:'Permanent.', w:1}
+  ]},
+  { scene:'therapist', q:'Haben Sie oft Angst?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Ja, ständig – selbst vor Toast.', w:1}
+  ]},
+
+  /* Denken & Wahrnehmung */
+  { scene:'office', q:'Vertrauen Sie Ihrer Wahrnehmung?', a:[
+    {t:'Ja.', w:-1},
+    {t:'Nicht immer.', w:0},
+    {t:'Nie – alles Illusion.', w:1}
+  ]},
+  { scene:'therapist', q:'Haben Sie fixe Rituale?', a:[
+    {t:'Kaum.', w:-1},
+    {t:'Ein paar kleine.', w:0},
+    {t:'Ohne meine 37 Handgriffe geht nichts.', w:1}
+  ]},
+  { scene:'office', q:'Erleben Sie Déjà-vus?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Ab und zu.', w:0},
+    {t:'Immer – sogar bei diesem Gespräch.', w:1}
+  ]},
+  { scene:'therapist', q:'Hören Sie manchmal Stimmen?', a:[
+    {t:'Nein.', w:-1},
+    {t:'Nur meine innere Stimme.', w:0},
+    {t:'Ja – sie debattieren gerade.', w:1}
+  ]},
+  { scene:'office', q:'Wie oft zweifeln Sie an Ihren Gedanken?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Immer.', w:1}
+  ]},
+
+  /* Alltag & Verhalten */
+  { scene:'therapist', q:'Wie verbringen Sie Ihre Freizeit?', a:[
+    {t:'Mit Hobbys.', w:-1},
+    {t:'Unterschiedlich.', w:0},
+    {t:'Nur mit Scrollen auf dem Handy.', w:1}
+  ]},
+  { scene:'office', q:'Wie gehen Sie mit Langeweile um?', a:[
+    {t:'Kreativ.', w:-1},
+    {t:'Mit Serien.', w:0},
+    {t:'Gar nicht – sie frisst mich.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie planen Sie Urlaube?', a:[
+    {t:'Organisiert.', w:-1},
+    {t:'Kurzfristig.', w:0},
+    {t:'Nie – Urlaub stresst.', w:1}
+  ]},
+  { scene:'office', q:'Wie wichtig sind Ihnen Hobbys?', a:[
+    {t:'Sehr.', w:-1},
+    {t:'Ganz okay.', w:0},
+    {t:'Hobbys? Nur Schlaf.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie reagieren Sie auf Stress im Alltag?', a:[
+    {t:'Mit Ruhe.', w:-1},
+    {t:'Gemischt.', w:0},
+    {t:'Mit Panikattacke.', w:1}
+  ]},
+
+  /* Soziale Kontakte */
+  { scene:'office', q:'Wie viele enge Freunde haben Sie?', a:[
+    {t:'Einige.', w:-1},
+    {t:'Einen oder zwei.', w:0},
+    {t:'Nur meine Zimmerpflanze.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie oft fühlen Sie sich einsam?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Ständig.', w:1}
+  ]},
+  { scene:'office', q:'Wie gehen Sie mit Fremden um?', a:[
+    {t:'Offen.', w:-1},
+    {t:'Zurückhaltend.', w:0},
+    {t:'Misstrauisch bis paranoid.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie ist Ihr Verhältnis zu Kollegen?', a:[
+    {t:'Gut.', w:-1},
+    {t:'Neutral.', w:0},
+    {t:'Katastrophe.', w:1}
+  ]},
+  { scene:'office', q:'Wie leicht schließen Sie neue Bekanntschaften?', a:[
+    {t:'Sehr leicht.', w:-1},
+    {t:'Mit Mühe.', w:0},
+    {t:'Gar nicht.', w:1}
+  ]},
+
+  /* Arbeit & Leistung */
+  { scene:'therapist', q:'Wie gehen Sie mit Aufgaben um?', a:[
+    {t:'Strukturiert.', w:-1},
+    {t:'Mal so, mal so.', w:0},
+    {t:'Gar nicht.', w:1}
+  ]},
+  { scene:'office', q:'Wie oft arbeiten Sie bis spät nachts?', a:[
+    {t:'Selten.', w:-1},
+    {t:'Manchmal.', w:0},
+    {t:'Immer – Nachtschicht ist mein Standard.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie fühlen Sie sich im Job?', a:[
+    {t:'Motiviert.', w:-1},
+    {t:'Okay.', w:0},
+    {t:'Völlig ausgebrannt.', w:1}
+  ]},
+  { scene:'office', q:'Wie gehen Sie mit Pausen um?', a:[
+    {t:'Regelmäßig.', w:-1},
+    {t:'Vergesse sie.', w:0},
+    {t:'Finde Pausen unnötig.', w:1}
+  ]},
+  { scene:'therapist', q:'Wie verhalten Sie sich in Stress-Meetings?', a:[
+    {t:'Bleibe ruhig.', w:-1},
+    {t:'Bin nervös.', w:0},
+    {t:'Flippe aus.', w:1}
+  ]},
+
+  /* Sonstiges */
+  { scene:'office', q:'Glauben Sie, dass alles Schicksal ist?', a:[
+    {t:'Nein.', w:-1},
+    {t:'Vielleicht.', w:0},
+    {t:'Ja – die Sterne steuern alles.', w:1}
+  ]},
+  { scene:'therapist', q:'Haben Sie ein Lebensmotto?', a:[
+    {t:'Ja, motivierend.', w:-1},
+    {t:'Irgendwas in der Art.', w:0},
+    {t:'Nein – alles sinnlos.', w:1}
+  ]},
+  { scene:'office', q:'Wie gehen Sie mit Überraschungen um?', a:[
+    {t:'Freue mich.', w:-1},
+    {t:'Gemischt.', w:0},
+    {t:'Mag sie gar nicht.', w:1}
+  ]},
+  { scene:'therapist', q:'Was halten Sie von diesem Spiel?', a:[
+    {t:'Witzig!', w:-1},
+    {t:'Seltsam.', w:0},
+    {t:'Es analysiert mich heimlich!', w:1}
+  ]}
+);
 
 /* ====== Satirische „echt klingende“ Diagnosen ====== */
 const DIAGNOSES = {
